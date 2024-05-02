@@ -5,7 +5,11 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\FormationResource\Pages;
 use App\Filament\Resources\FormationResource\RelationManagers;
 use App\Models\Formation;
+use App\Models\Module;
+use App\Models\School;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -23,7 +27,16 @@ class FormationResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Select::make('module_id')
+                    ->options(Module::pluck('name', 'id'))
+                    ->searchable(),
+
+                Select::make('school_id')
+                    ->options(School::pluck('name', 'id'))
+                    ->searchable(),
+
+                Textarea::make('aleas')
+                    ->nullable(),
             ]);
     }
 
