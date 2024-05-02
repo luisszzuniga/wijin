@@ -10,6 +10,7 @@ use App\Models\School;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -28,15 +29,22 @@ class FormationResource extends Resource
         return $form
             ->schema([
                 Select::make('module_id')
+                    ->required()
                     ->options(Module::pluck('name', 'id'))
                     ->searchable(),
 
                 Select::make('school_id')
+                    ->required()
                     ->options(School::pluck('name', 'id'))
                     ->searchable(),
 
                 Textarea::make('aleas')
                     ->nullable(),
+
+                TextInput::make('hourly_price_ht')
+                    ->required()
+                    ->type('number')
+                    ->step('0.01'),
             ]);
     }
 

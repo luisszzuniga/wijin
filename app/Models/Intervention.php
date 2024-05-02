@@ -16,7 +16,6 @@ class Intervention extends Model
         'date',
         'time',
         'duration',
-        'hourly_price_ht',
         'comment',
     ];
 }

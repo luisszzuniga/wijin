@@ -18,6 +18,7 @@ class Formation extends Model implements HasMedia
         'promotion_id',
         'name',
         'description',
+        'hourly_price_ht',
     ];
 
     public function registerMediaCollections(): void
