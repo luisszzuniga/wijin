@@ -10,6 +10,7 @@ use App\Models\Promotion;
 use App\Models\School;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -47,6 +48,14 @@ class FormationResource extends Resource
                     ->required()
                     ->type('number')
                     ->step('0.01'),
+
+                SpatieMediaLibraryFileUpload::make('syllabus')
+                    ->collection('syllabus')
+                    ->multiple(),
+
+                SpatieMediaLibraryFileUpload::make('evaluation')
+                    ->collection('evaluation')
+                    ->multiple(),
             ]);
     }
 

@@ -27,10 +27,6 @@ class SchoolResource extends Resource
 
                 TextInput::make('address')
                     ->required(),
-
-                TextInput::make('numero_declaration')
-                    ->integer()
-                    ->required(),
             ]);
     }
 
@@ -41,7 +37,6 @@ class SchoolResource extends Resource
                 TextColumn::make('name'),
                 TextColumn::make('address')
                     ->searchable(),
-                TextColumn::make('numero_declaration')
             ])
             ->filters([
                 //
