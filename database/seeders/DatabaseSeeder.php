@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Enums\RoleEnum;
+use App\Enums\UserRoleEnum;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Luis Zuniga',
             'email' => 'luiszu7779@gmail.com',
             'password' => 'motdepasse',
-            'role' => RoleEnum::Admin->value,
+            'role' => UserRoleEnum::Admin->value,
             'email_verified_at' => now(),
         ]);
     }
