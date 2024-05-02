@@ -20,6 +20,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\FormationResource\RelationManagers\InterventionsRelationManager;
 
 class FormationResource extends Resource
 {
@@ -92,7 +93,7 @@ class FormationResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            InterventionsRelationManager::class,
         ];
     }
 
