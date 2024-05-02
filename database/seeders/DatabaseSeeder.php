@@ -16,12 +16,14 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Luis Zuniga',
-            'email' => 'luiszu7779@gmail.com',
-            'password' => 'motdepasse',
-            'role' => UserRoleEnum::Admin->value,
-            'email_verified_at' => now(),
-        ]);
+        User::withoutEvents(function () {
+            User::factory()->create([
+                'name' => 'Luis Zuniga',
+                'email' => 'luiszu7779@gmail.com',
+                'password' => 'motdepasse',
+                'role' => UserRoleEnum::Admin->value,
+                'email_verified_at' => now(),
+            ]);
+        });
     }
 }
