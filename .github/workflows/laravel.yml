@@ -1,0 +1,72 @@
+name: Deploy Website
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy to develop
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up MySQL
+        run: |
+          sudo /etc/init.d/mysql start
+          mysql -h 127.0.0.1 -e "CREATE DATABASE testing;" -uroot -proot
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP with PECL extension
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: imagick, swoole
+
+      - name: PHP Version
+        run: php --version
+
+      - name: Copy .env
+        run: cp .env.example .env
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate
+
+      - name: Install PHP dependencies
+        run: composer install --no-progress --optimize-autoloader
+
+      - name: Set Node.js 20.11.1
+        uses: actions/setup-node@v1
+        with:
+          node-version: 20.11.1
+
+      - name: Node version
+        run: node --version
+
+      - name: NPM version
+        run: npm --version
+
+      - name: npm install
+        run: npm install
+
+      - name: npm run build
+        run: npm run build
+      
+      - name: Generate key
+        run: php artisan key:generate
+
+      # - name: PHPUnit
+      #  run: ./vendor/bin/phpunit
+
+      # - name: PHPStan
+      #   run: ./vendor/bin/phpstan analyse
+
+      # - name: PHPCS
+      #   run: ./vendor/bin/phpcs
+      
+      # Trigger Ploi deploy webhook
+      - name: Deploy
+        uses: Glennmen/ploi-deploy-action@v1.2.0
+        with:
+          webhook_url: ${{ secrets.WEBHOOK_URL_DEV }}
