@@ -27,6 +27,8 @@ class ListUsers extends ListRecords
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('role', UserRoleEnum::Admin->value)),
             'formateur' => Tab::make('Formateurs')
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('role', UserRoleEnum::Formateur->value)),
+            'archived' => Tab::make('Archivés')
+                ->modifyQueryUsing(fn (Builder $query) => $query->withTrashed()->where('deleted_at', '!=', null)),
         ];
     }
 }
