@@ -34,10 +34,6 @@ class UserResource extends Resource
                 TextInput::make('email')
                     ->email()
                     ->required(),
-
-                TextInput::make('password')
-                    ->password()
-                    ->required(),
             ]);
     }
 
@@ -64,7 +60,7 @@ class UserResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(), 
+                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
