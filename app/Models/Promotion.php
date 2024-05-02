@@ -23,5 +23,7 @@ class Promotion extends Model
      */
     protected $fillable = [
         'name',
+        'school_id',
+        'comment',
     ];
 }
