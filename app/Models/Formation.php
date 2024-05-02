@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Observers\FormationObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,6 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
+#[ObservedBy(FormationObserver::class)]
 class Formation extends Model implements HasMedia
 {
     use HasFactory, SoftDeletes, InteractsWithMedia;
@@ -19,6 +22,7 @@ class Formation extends Model implements HasMedia
         'name',
         'description',
         'hourly_price_ht',
+        'aleas',
     ];
 
     public function registerMediaCollections(): void

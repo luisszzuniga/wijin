@@ -2,12 +2,13 @@
 
 namespace App\Observers;
 
+use App\Enums\FormationStatusEnum;
 use App\Models\Formation;
 
 class FormationObserver
 {
     public function creating(Formation $formation)
     {
-        // status
+        $formation->status = FormationStatusEnum::DRAFT->value;
     }
 }

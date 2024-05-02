@@ -6,6 +6,7 @@ use App\Filament\Resources\FormationResource\Pages;
 use App\Filament\Resources\FormationResource\RelationManagers;
 use App\Models\Formation;
 use App\Models\Module;
+use App\Models\Promotion;
 use App\Models\School;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
@@ -14,6 +15,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -33,9 +35,9 @@ class FormationResource extends Resource
                     ->options(Module::pluck('name', 'id'))
                     ->searchable(),
 
-                Select::make('school_id')
+                Select::make('promotion_id')
                     ->required()
-                    ->options(School::pluck('name', 'id'))
+                    ->options(Promotion::pluck('name', 'id'))
                     ->searchable(),
 
                 Textarea::make('aleas')
@@ -52,7 +54,18 @@ class FormationResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('promotion.name')
+                    ->searchable()
+                    ->label('Promotion'),
+
+                TextColumn::make('promotion.school.name')
+                    ->searchable()
+                    ->badge()
+                    ->label('Ecole'),
+                
+                TextColumn::make('module.name')
+                    ->searchable()
+                    ->label('Module'),
             ])
             ->filters([
                 //
