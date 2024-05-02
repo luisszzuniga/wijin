@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\SchoolResource\Pages;
+use App\Filament\Resources\SchoolResource\RelationManagers\PromotionsRelationManager;
 use App\Models\School;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -58,7 +59,7 @@ class SchoolResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            PromotionsRelationManager::class
         ];
     }
 
