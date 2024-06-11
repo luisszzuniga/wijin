@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Enums\UserRoleEnum;
+use App\Filament\Resources\FormationResource;
 use App\Models\Intervention;
 use Carbon\Carbon;
 use Saade\FilamentFullCalendar\Data\EventData;
@@ -62,6 +63,7 @@ class CalendarWidget extends FullCalendarWidget
                     ->title($title)
                     ->start($start)
                     ->end($end)
+                    ->url(FormationResource::getUrl('edit', ['record' => $intervention->formation->id]), true)
                     ->toArray();
             }
         }
