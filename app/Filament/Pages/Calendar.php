@@ -16,8 +16,8 @@ class Calendar extends Page
 
     public function mount()
     {
-        $this->users = User::pluck('name', 'id')
-            ->where('role', UserRoleEnum::Formateur->value)
+        $this->users = User::where('role', UserRoleEnum::Formateur->value)
+            ->pluck('name', 'id')
             ->toArray();
     }
 }
