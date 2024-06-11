@@ -27,4 +27,9 @@ class Intervention extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function formation(): BelongsTo
+    {
+        return $this->belongsTo(Formation::class);
+    }
 }
