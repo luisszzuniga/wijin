@@ -21,7 +21,7 @@
         <p>Voici vos identifiants de connexion :</p>
 
         <br />
-        <p>Email : {{ $user  }}</p>
+        <p>Email : {{ $user->email  }}</p>
         <p>Mot de passe : {{ $password }}</p>
 
         <br />
