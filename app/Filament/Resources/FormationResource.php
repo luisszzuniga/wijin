@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\UserRoleEnum;
 use App\Filament\Resources\FormationResource\Pages;
 use App\Models\Formation;
 use App\Models\Module;
@@ -31,13 +32,15 @@ class FormationResource extends Resource
                     ->required()
                     ->options(Module::pluck('name', 'id'))
                     ->label('Module')
-                    ->searchable(),
+                    ->searchable()
+                    ->disabled(auth()->user()->role !== UserRoleEnum::Admin),
 
                 Select::make('promotion_id')
                     ->required()
                     ->options(Promotion::pluck('name', 'id'))
                     ->label('Promotion')
-                    ->searchable(),
+                    ->searchable()
+                    ->disabled(auth()->user()->role !== UserRoleEnum::Admin),
 
                 Textarea::make('aleas')
                     ->nullable(),
@@ -46,7 +49,8 @@ class FormationResource extends Resource
                     ->required()
                     ->label('Prix horaire HT')
                     ->type('number')
-                    ->step('0.01'),
+                    ->step('0.01')
+                    ->disabled(auth()->user()->role !== UserRoleEnum::Admin),
 
                 SpatieMediaLibraryFileUpload::make('syllabus')
                     ->collection('syllabus')
