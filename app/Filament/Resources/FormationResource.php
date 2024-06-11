@@ -3,12 +3,9 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\FormationResource\Pages;
-use App\Filament\Resources\FormationResource\RelationManagers;
 use App\Models\Formation;
 use App\Models\Module;
 use App\Models\Promotion;
-use App\Models\School;
-use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
@@ -18,8 +15,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\FormationResource\RelationManagers\InterventionsRelationManager;
 
 class FormationResource extends Resource
@@ -35,11 +30,13 @@ class FormationResource extends Resource
                 Select::make('module_id')
                     ->required()
                     ->options(Module::pluck('name', 'id'))
+                    ->label('Module')
                     ->searchable(),
 
                 Select::make('promotion_id')
                     ->required()
                     ->options(Promotion::pluck('name', 'id'))
+                    ->label('Promotion')
                     ->searchable(),
 
                 Textarea::make('aleas')
@@ -47,6 +44,7 @@ class FormationResource extends Resource
 
                 TextInput::make('hourly_price_ht')
                     ->required()
+                    ->label('Prix horaire HT')
                     ->type('number')
                     ->step('0.01'),
 
@@ -72,7 +70,7 @@ class FormationResource extends Resource
                     ->searchable()
                     ->badge()
                     ->label('Ecole'),
-                
+
                 TextColumn::make('module.name')
                     ->searchable()
                     ->label('Module'),

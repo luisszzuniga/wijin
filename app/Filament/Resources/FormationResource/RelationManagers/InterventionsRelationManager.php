@@ -2,14 +2,14 @@
 
 namespace App\Filament\Resources\FormationResource\RelationManagers;
 
-use Filament\Forms\Get;
+use App\Models\Intervention;
+use Filament\Forms\Components\Repeater;
 use App\Models\User;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -24,88 +24,55 @@ class InterventionsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Toggle::make('is_recurrent')
-                    ->label('Récurrent')
-                    ->reactive()
-                    ->default(false)
-                    ->hidden(fn (string $operation) => $operation === 'edit'),
-
                 Select::make('user_id')
                     ->label('Formateur')
                     ->searchable()
                     ->required()
+                    ->columnSpan('full')
                     ->options(fn () => User::pluck('name', 'id')),
 
-                Select::make('frequency')
-                    ->label('Fréquence')
-                    ->options([
-                        'weekly' => 'Toutes les semaines',
-                        'biweekly' => 'Toutes les deux semaines',
-                        'triweekly' => 'Toutes les trois semaines',
-                        'monthly' => 'Tous les mois',
+                Repeater::make('dates')
+                    ->schema([
+                        DatePicker::make('date')
+                            ->label('Date')
+                            ->native(false)
+                            ->minDate(now())
+                            ->closeOnDateSelection()
+                            ->required(),
                     ])
-                    ->hidden(fn (Get $get) => $get('is_recurrent') === false)
-                    ->requiredIf('is_recurrent', true),
-
-                Select::make('days')
-                    ->label('Jours')
-                    ->multiple()
-                    ->options([
-                        'monday' => 'Lundi',
-                        'tuesday' => 'Mardi',
-                        'wednesday' => 'Mercredi',
-                        'thursday' => 'Jeudi',
-                        'friday' => 'Vendredi',
-                        'saturday' => 'Samedi',
-                        'sunday' => 'Dimanche',
-                    ])
-                    ->hidden(fn (Get $get) => $get('is_recurrent') === false)
-                    ->requiredIf('is_recurrent', true),
-
-                DatePicker::make('date')
-                    ->label(fn (Get $get) => $get('is_recurrent') ? 'Date de début' : 'Date')
-                    ->native(false)
-                    ->minDate(now())
-                    ->closeOnDateSelection()
-                    ->columnSpan(fn (Get $get, string $operation) => $get('is_recurrent') || $operation === "edit" ? 1 : 'full')
-                    ->required(),
-
-                DatePicker::make('end_date')
-                    ->label('Date de fin')
-                    ->native(false)
-                    ->minDate(now())
-                    ->closeOnDateSelection()
-                    ->hidden(fn (Get $get) => $get('is_recurrent') === false)
-                    ->requiredIf('is_recurrent', true),
+                    ->addActionLabel('Ajouter une date')
+                    ->columnSpanFull()
+                    ->grid(2),
 
                 Fieldset::make('Horaires')
                     ->schema([
                         TimePicker::make('morning_start_time')
                             ->label('Début de matinée')
-                            ->displayFormat('H:i')
+                            ->seconds(false)
                             ->default('09:00')
                             ->required(),
 
                         TimePicker::make('morning_end_time')
                             ->label('Fin de matinée')
-                            ->displayFormat('H:i')
+                            ->seconds(false)
                             ->default('12:30')
                             ->required(),
 
                         TimePicker::make('afternoon_start_time')
                             ->label("Début d'après-midi")
-                            ->displayFormat('H:i')
+                            ->seconds(false)
                             ->default('13:30')
                             ->required(),
 
                         TimePicker::make('afternoon_end_time')
                             ->label("Fin d'après-midi")
-                            ->displayFormat('H:i')
+                            ->seconds(false)
                             ->default('17:00')
                             ->required(),
                     ]),
 
                 Textarea::make('comment')
+                    ->label("Commentaire")
                     ->columnSpanFull()
                     ->nullable(),
             ]);
@@ -119,14 +86,16 @@ class InterventionsRelationManager extends RelationManager
                 TextColumn::make('date'),
 
                 TextColumn::make('duration')
-                    ->formatStateUsing(fn ($record) => gmdate('H\hi', $record->duration)),
+                    ->formatStateUsing(fn ($record) => gmdate('H\hi', $record->duration))
+                    ->label('Durée'),
 
                 TextColumn::make('formateur.name')
                     ->searchable()
                     ->label('Formateur'),
 
                 TextColumn::make('comment')
-                    ->words(50),
+                    ->words(50)
+                    ->label('Commentaire'),
             ])
             ->filters([
                 //
@@ -135,9 +104,7 @@ class InterventionsRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make()
                     ->mutateFormDataUsing(function (array $data) {
                         $intervention = $this->setTime($data);
-                        $this->createInterventions($intervention);
-
-                        return $intervention;
+                        return $this->createInterventions($intervention);
                     }),
             ])
             ->actions([
@@ -198,43 +165,29 @@ class InterventionsRelationManager extends RelationManager
      * @param array $data
      * @return void
      */
-    private function createInterventions(array $data): void {
-        // Créer toutes les interventions à partir de la recurrence
-        if (!$data['is_recurrent']) {
-            return;
-        }
+    private function createInterventions(array $data): array {
+        // Créer toutes les interventions à partir des dates
+        $dates = $data['dates'];
 
-        $startDate = $data['date'];
-        $endDate = $data['end_date'];
-        $days = $data['days'];
-        $frequency = $data['frequency'];
-
-        $interventions = [];
-
-        while ($startDate <= $endDate) {
-            if (in_array(strtolower($startDate->format('l')), $days)) {
-                $interventions[] = [
+        foreach ($dates as $key => $date) {
+            // Si c'est la dernière date, on la return
+            if ($key === count($dates) - 1) {
+                return [
                     'user_id' => $data['user_id'],
-                    'date' => $startDate,
+                    'formation_id' => $this->ownerRecord->id,
+                    'date' => $date['date'],
                     'time' => $data['time'],
                     'comment' => $data['comment'],
                 ];
             }
 
-            $startDate = match ($frequency) {
-                'weekly' => $startDate->addWeek(),
-                'biweekly' => $startDate->addWeeks(2),
-                'triweekly' => $startDate->addWeeks(3),
-                'monthly' => $startDate->addMonth(),
-            };
-        }
-
-        $this->createMany($interventions);
-    }
-
-    private function createMany(array $interventions): void {
-        foreach ($interventions as $intervention) {
-            $this->getModel()::create($intervention);
+            Intervention::create([
+                'user_id' => $data['user_id'],
+                'formation_id' => $this->ownerRecord->id,
+                'date' => $date['date'],
+                'time' => $data['time'],
+                'comment' => $data['comment'],
+            ]);
         }
     }
 }
