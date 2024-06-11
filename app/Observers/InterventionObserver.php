@@ -6,7 +6,7 @@ use App\Models\Intervention;
 
 class InterventionObserver
 {
-    public function creating(Intervention $intervention)
+    public function creating(Intervention $intervention): void
     {
         foreach (json_decode($intervention->time) as $time) {
             $intervention->duration += strtotime($time->end) - strtotime($time->start);
