@@ -10,6 +10,7 @@ use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -61,25 +62,32 @@ class InterventionsRelationManager extends RelationManager
                             ->label('Début de matinée')
                             ->seconds(false)
                             ->default('09:00')
+                            ->native(false)
+                            ->minutesStep(15)
                             ->required(),
 
                         TimePicker::make('morning_end_time')
                             ->label('Fin de matinée')
                             ->seconds(false)
                             ->default('12:30')
+                            ->native(false)
+                            ->minutesStep(15)
                             ->required(),
 
                         TimePicker::make('afternoon_start_time')
                             ->label("Début d'après-midi")
                             ->seconds(false)
-                            ->default('13:30')
-                            ->required(),
+                            ->nullable()
+                            ->native(false)
+                            ->minutesStep(15)
+                            ->default('13:30'),
 
                         TimePicker::make('afternoon_end_time')
                             ->label("Fin d'après-midi")
                             ->seconds(false)
-                            ->default('17:00')
-                            ->required(),
+                            ->native(false)
+                            ->minutesStep(15)
+                            ->default('17:00'),
                     ]),
 
                 Textarea::make('comment')
