@@ -13,7 +13,8 @@ class EditFormation extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()
+                ->disabled(fn ($record) => auth()->user()->can('delete', $record)),
         ];
     }
 }

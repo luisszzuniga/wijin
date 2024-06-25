@@ -123,11 +123,13 @@ class InterventionsRelationManager extends RelationManager
                 Tables\Actions\EditAction::make()
                     ->mutateRecordDataUsing(fn (array $data) => $this->reverseTime($data))
                     ->mutateFormDataUsing(fn (array $data) => $this->setTime($data)),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->disabled(fn ($record) => ! auth()->user()->can('delete', $record)),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->disabled(fn () => ! auth()->user()->can('delete')),
                 ]),
             ]);
     }

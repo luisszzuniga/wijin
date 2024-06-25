@@ -83,11 +83,13 @@ class FormationResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->disabled(fn ($record) => ! auth()->user()->can('create', Formation::class))
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->disabled(fn () => ! auth()->user()->can('delete')),
                 ]),
             ]);
     }
