@@ -15,6 +15,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Date;
 
 class InterventionsRelationManager extends RelationManager
 {
@@ -38,11 +39,21 @@ class InterventionsRelationManager extends RelationManager
                             ->native(false)
                             ->minDate(now())
                             ->closeOnDateSelection()
-                            ->required(),
+                            ->required()
+                            ->disabledOn('edit'),
                     ])
                     ->addActionLabel('Ajouter une date')
                     ->columnSpanFull()
-                    ->grid(2),
+                    ->grid(2)
+                    ->hiddenOn('edit'),
+
+                DatePicker::make('date')
+                    ->label('Date')
+                    ->native(false)
+                    ->minDate(now())
+                    ->closeOnDateSelection()
+                    ->hiddenOn('create')
+                    ->required(),
 
                 Fieldset::make('Horaires')
                     ->schema([
@@ -102,6 +113,7 @@ class InterventionsRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
+                    ->disabled(fn () => ! auth()->user()->can('create', Intervention::class))
                     ->mutateFormDataUsing(function (array $data) {
                         $intervention = $this->setTime($data);
                         return $this->createInterventions($intervention);
