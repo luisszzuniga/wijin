@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\FormationResource\RelationManagers;
 
+use App\Mail\FormateurAffected;
 use App\Models\Intervention;
 use Filament\Forms\Components\Repeater;
 use App\Models\User;
@@ -17,6 +18,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Mail;
 
 class InterventionsRelationManager extends RelationManager
 {
@@ -190,6 +192,9 @@ class InterventionsRelationManager extends RelationManager
     private function createInterventions(array $data): array {
         // Créer toutes les interventions à partir des dates
         $dates = $data['dates'];
+
+        // Notification d'affectation
+        Mail::to(User::find($data['user_id'])->email)->send(new FormateurAffected($this->ownerRecord, $dates));
 
         foreach ($dates as $key => $date) {
             // Si c'est la dernière date, on la return
