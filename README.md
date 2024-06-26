@@ -65,9 +65,9 @@ Laravel Sail est un environnement de développement léger basé sur Docker pour
 ## Accès aux services
 
 Une fois les conteneurs Docker démarrés, vous pouvez accéder aux services suivants :
-- Application : [localhost:80](localhost:80)
-- phpMyAdmin : [localhost:8080](localhost:8080)
-- Mailpit : [localhost:8025](localhost:8025)
+- Application : [localhost:80](http://localhost:80)
+- phpMyAdmin : [localhost:8080](http://localhost:8080)
+- Mailpit : [localhost:8025](http://localhost:8025)
 
 ## Tests
 
