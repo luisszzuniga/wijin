@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\FormationStatusEnum;
 use App\Enums\UserRoleEnum;
 use App\Filament\Resources\FormationResource\Pages;
 use App\Models\Formation;
@@ -78,6 +79,12 @@ class FormationResource extends Resource
                 TextColumn::make('module.name')
                     ->searchable()
                     ->label('Module'),
+                TextColumn::make('status')
+                    ->searchable()
+                    ->label('Statut')
+                    ->formatStateUsing(function ($state) {
+                        return FormationStatusEnum::tryFrom($state)?->getLabel() ?? $state;
+                    }),
             ])
             ->filters([
                 //
