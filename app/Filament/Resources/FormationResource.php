@@ -44,7 +44,14 @@ class FormationResource extends Resource
 
                 Select::make('promotion_id')
                     ->required()
-                    ->options(Promotion::pluck('name', 'id'))
+                    ->options(function () {
+                        $promotions = Promotion::with('school')->get();
+                        $options = [];
+                        foreach ($promotions as $promotion) {
+                            $options[$promotion->id] = $promotion->name . ' (' . $promotion->school->name . ')';
+                        }
+                        return $options;
+                    })
                     ->label('Promotion')
                     ->searchable()
                     ->disabled(auth()->user()->role !== UserRoleEnum::Admin),
