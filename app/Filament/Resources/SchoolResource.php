@@ -27,6 +27,9 @@ class SchoolResource extends Resource
 
                 TextInput::make('address')
                     ->required(),
+
+                TextInput::make('formation_organism_num')
+                    ->required(),
             ]);
     }
 

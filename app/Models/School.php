@@ -19,7 +19,7 @@ class School extends Model
     protected $fillable = [
         'name',
         'address',
-        'numero_declaration',
+        'formation_organism_num',
     ];
 
     public function promotions(): HasMany

@@ -18,6 +18,9 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use App\Filament\Resources\FormationResource\RelationManagers\InterventionsRelationManager;
+use Filament\Infolists\Components\Fieldset;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Tables\Filters\SelectFilter;
 
 class FormationResource extends Resource
@@ -64,6 +67,22 @@ class FormationResource extends Resource
             ]);
     }
 
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Fieldset::make('Facturation')
+                    ->schema([
+                        TextEntry::make('facturationInfos') 
+                            ->label('Infos de facturation')
+                            ->copyable()
+                            ->columnSpanFull()
+                            ->copyMessage('Copié!'),
+                    ])
+                    ->columnSpanFull()
+            ]);
+    }
+
     public static function table(Table $table): Table
     {
         return $table
@@ -94,7 +113,11 @@ class FormationResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->disabled(fn ($record) => ! auth()->user()->can('create', Formation::class))
+                    ->disabled(fn ($record) => ! auth()->user()->can('create', Formation::class)),
+
+                Tables\Actions\ViewAction::make()
+                    ->label('Facturation')
+                    ->disabled(fn ($record) => $record->status !== FormationStatusEnum::EVALUATED->value),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
