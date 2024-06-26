@@ -26,6 +26,7 @@ class AdminPanelProvider extends PanelProvider
     {
         return $panel
             ->default()
+            ->brandLogo('images/logo-wijin.png')
             ->id('admin')
             ->path('admin')
             ->login()
