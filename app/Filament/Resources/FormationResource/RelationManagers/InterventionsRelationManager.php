@@ -13,6 +13,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -139,7 +140,7 @@ class InterventionsRelationManager extends RelationManager
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->disabled(fn () => ! auth()->user()->can('delete')),
+                        ->disabled(fn () => ! auth()->user()->can('delete', Intervention::class)),
                 ]),
             ]);
     }
@@ -192,6 +193,19 @@ class InterventionsRelationManager extends RelationManager
     private function createInterventions(array $data): array {
         // Créer toutes les interventions à partir des dates
         $dates = $data['dates'];
+
+        $formateur = User::with('interventions')->where('id', $data['user_id'])->first();
+
+        foreach ($dates as $date) {
+            foreach ($formateur->interventions as $intervention) {
+                if ($intervention->date === $date['date']) {
+                    Notification::make()
+                        ->title('Le formateur ' . $formateur->name . ' est déjà affecté à une formation le ' . $date['date'])
+                        ->warning()
+                        ->send();
+                }
+            }
+        }
 
         // Notification d'affectation
         Mail::to(User::find($data['user_id'])->email)->send(new FormateurAffected($this->ownerRecord, $dates));

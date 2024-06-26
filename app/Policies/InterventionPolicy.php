@@ -21,7 +21,7 @@ class InterventionPolicy
         return $user->role === UserRoleEnum::Admin;
     }
 
-    public function delete(User $user, Intervention $intervention): bool
+    public function delete(User $user): bool
     {
         return $user->role === UserRoleEnum::Admin;
     }
