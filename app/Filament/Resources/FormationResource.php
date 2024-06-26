@@ -18,9 +18,11 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use App\Filament\Resources\FormationResource\RelationManagers\InterventionsRelationManager;
+use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Filament\Notifications\Notification;
 use Filament\Tables\Filters\SelectFilter;
 
 class FormationResource extends Resource
@@ -77,7 +79,21 @@ class FormationResource extends Resource
                             ->label('Infos de facturation')
                             ->copyable()
                             ->columnSpanFull()
-                            ->copyMessage('Copié!'),
+                            ->copyMessage('Copié!')
+                            ->hintAction(
+                                Action::make('Facturer')
+                                    ->icon('heroicon-m-document-check')
+                                    ->disabled(fn ($record) => $record->status !== FormationStatusEnum::EVALUATED->value)
+                                    ->action(function ($record) {
+                                        $record->status = FormationStatusEnum::INVOICED->value;
+                                        $record->save();
+
+                                        Notification::make()
+                                            ->title('Formation facturée !')
+                                            ->success()
+                                            ->send();
+                                    })
+                            ),
                     ])
                     ->columnSpanFull()
             ]);
@@ -117,7 +133,7 @@ class FormationResource extends Resource
 
                 Tables\Actions\ViewAction::make()
                     ->label('Facturation')
-                    ->disabled(fn ($record) => $record->status !== FormationStatusEnum::EVALUATED->value),
+                    ->disabled(fn ($record) => $record->status !== FormationStatusEnum::EVALUATED->value && $record->status !== FormationStatusEnum::INVOICED->value),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
