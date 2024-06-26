@@ -105,7 +105,8 @@ class InterventionsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('date')
             ->columns([
-                TextColumn::make('date'),
+                TextColumn::make('date')
+                    ->sortable(),
 
                 TextColumn::make('duration')
                     ->formatStateUsing(fn ($record) => gmdate('H\hi', $record->duration))
