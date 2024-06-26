@@ -18,6 +18,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use App\Filament\Resources\FormationResource\RelationManagers\InterventionsRelationManager;
+use Filament\Tables\Filters\SelectFilter;
 
 class FormationResource extends Resource
 {
@@ -87,7 +88,9 @@ class FormationResource extends Resource
                     }),
             ])
             ->filters([
-                //
+                SelectFilter::make('status')
+                    ->options(FormationStatusEnum::getList())
+                    ->label('Statut'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()

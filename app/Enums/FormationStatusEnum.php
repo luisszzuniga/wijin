@@ -22,4 +22,16 @@ enum FormationStatusEnum: string
             self::INVOICED => 'Facturé',
         };
     }
+
+    public static function getList(): array
+    {
+        return [
+            self::DRAFT->value => 'Besoin',
+            self::PLANNED->value => 'Planifié',
+            self::IN_PROGRESS->value => 'En cours',
+            self::EVALUATION->value => 'En évaluation',
+            self::EVALUATED->value => 'Évalué',
+            self::INVOICED->value => 'Facturé',
+        ];
+    }
 }
